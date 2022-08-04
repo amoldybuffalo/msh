@@ -1,8 +1,10 @@
+
 #include <stddef.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#define _XOPEN_SOURCE 700
 #include <sys/types.h>
 #include <signal.h>
 #include <sys/wait.h>
@@ -34,16 +36,40 @@ enum EXPRESSION_TYPE find_expression_type(char** expression, int length)
 	return COMMAND;
 }
 
-char** resolve_arguments(char** argument_array, int length)
-{
+void push_to_history(char* command);
+char* pop_from_history();
 
-	enum SECTION_TYPE
+void resolve_arguments(char** args, int argc)
+{
+	int resolved_length = argc;
+	for(int i = 0; i < argc; i++) if(args[i][0] == '"' && args[i][strlen(args[0])] != '"') resolved_length--;
+	char** resolved_argument_array = malloc(resolved_length * sizeof(char*));
+	for(int i = 0; i < resolved_length; i++) resolved_argument_array[i] = malloc(strlen(args[0]) + 1);
+	//first pass to resolve variables
+	for(int i = 0; i < argc; i++)
 	{
-		VARIABLE,
-		QUOTED
-	};
-	char** resolved_argument_array;
-	for(int i = 0; i < length; i++);
+		if(args[i][0] == '$') 
+		{
+			if(variables->exists(variables, substr(args[i],1, strlen(args[i])))) 
+				strcpy(args[i], variables->find(variables, substr(args[i], 1, strlen(args[i]))));
+			else printf("ERROR VARIABLE UNDEFINED");
+			
+		}
+		
+	}
+	
+}
+
+void assign_variable(char* variable, char* contents)
+{
+	if(variables->exists(variables, variable))
+	{
+		variables->modify(variables, variable, contents);
+	}
+	else
+	{
+		variables->add(variables, variable, contents);
+	}
 	
 }
 
@@ -51,23 +77,14 @@ char* parse(char* argument_string)
 {	
 	int length;
 	char** argument_array = split(argument_string, " ", &length);
+	resolve_arguments(argument_array, length);
 	char* result = NULL;
 	enum EXPRESSION_TYPE ep = find_expression_type(argument_array, length);
 	switch(ep)
 	{
 		case DEFINITION: {
 			char** var_arr = split(argument_array[0], "=", NULL);
-			print_var(var_arr[0]);
-			print_var(var_arr[1]);
-		
-			if(variables->exists(variables, var_arr[0]))
-			{
-				variables->modify(variables, var_arr[0], var_arr[1]);
-			}
-			else
-			{
-				variables->add(variables, var_arr[0], var_arr[1]);
-			}
+			assign_variable(var_arr[0], var_arr[1]);
 			define_empty(result);
 			
 		}break;

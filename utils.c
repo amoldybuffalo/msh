@@ -9,8 +9,15 @@ void append_char(char* dest, char c)
 	strcat(dest, to_append);
 }
 
-void substr(char* dest, const char* source, size_t start, size_t end)
+char* substr(char* source, size_t start, size_t end)
 {
+	int size =  (int) end - (int) start;
+	if(size < 0) 
+	{
+		printf("Error! (in substr) start cannot be greater than end;");
+		return NULL;		
+	}
+	char* dest = malloc(size * sizeof(char));
 	for(size_t i = 0; i < strlen(source); i++)
 	{
 		if(i >= start && i <= end)
@@ -18,11 +25,12 @@ void substr(char* dest, const char* source, size_t start, size_t end)
 			append_char(dest, source[i]);
 		}
 	}	
+	return dest;
 }
 
 char* join(char** str_arr, char* ch, int arr_size)
 {
-	char* result = malloc(strlen(str_arr[0]) * arr_size + strlen(ch) * arr_size -1);
+	char* result = malloc(strlen(str_arr[0]) * arr_size + strlen(ch) * arr_size * 2);
 	for(int i = 0; i < arr_size; i++)
 	{
 		strcat(result, str_arr[i]);
@@ -70,6 +78,17 @@ int str_includes_ch(char* str, char ch)
 		if(str[i] == ch) return 1;
 	}
 	return 0;
+}
+
+int ch_include_count(char* str, char ch)
+{
+	int count = 0;
+	for(size_t i = 0; i < strlen(str); i++)
+	{
+		if(str[i] == ch) count++;
+	}
+	return count;
+	
 }
 
 char** sub_str_arr(char** source, int start, int end, int length)

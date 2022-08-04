@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <linux/limits.h>
 #include "hash_map.h"
 #include "utils.h"
 #include "builtins.h"
@@ -13,7 +14,10 @@
 #endif
 char* echo(char** args, int argc)
 {
-	char* result = join(args, " ", argc);
+	char* result = join(sub_str_arr(args, 1, argc, argc), " ", argc);
+	result = realloc(result, strlen(result) + 2);
+	result[strlen(result)] = '\n';
+	result[strlen(result) + 1] = '\0';
 	return result;	
 } 
 

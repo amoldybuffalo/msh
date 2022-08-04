@@ -42,7 +42,10 @@ FILE* spawn(char** args, int argc, char** env_variables, pid_t *process_pid)
 		//my code to get the program and then the arguments to it.
 		char* program = malloc(strlen(args[0] + 1));
 		char** cut_args = sub_str_arr(args, 1, argc, argc);
-		print_var(cut_args[0]);
+		for(int i = 0; i < argc-1; i++)
+		{
+			print_var(cut_args[i]);
+		}
 		strcpy(program, args[0]);
 		
 		pid_t pid = 0;
@@ -59,7 +62,7 @@ FILE* spawn(char** args, int argc, char** env_variables, pid_t *process_pid)
 		 	 execvpe(program, cut_args, env_variables);
 		}
 		
-		//Only parent gets here
+		//pass the pid to an outer process
 		if(process_pid) *process_pid = pid;
 		
 		close(pipefd[1]);

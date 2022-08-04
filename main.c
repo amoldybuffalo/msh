@@ -3,6 +3,8 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
+#include "defs.h"
 #include "utils.h"
 #include "io.h"
 #include "hash_map.h"
@@ -31,9 +33,12 @@ int main()
 	init_builtins(builtins, 100);
 	hash_str_add(settings, "workingdir", "/");
  	char c[500];
-	
+ 	int a = 1;
+ 	char* str  = "hello";
+	print_var(a);
+	print_var(str);
  	while(1)
- 	{
+ 	{	
 	 	draw_prompt(">");
 	 	get_line(c, sizeof(c));
 	 	if(strcmp(c, "") != 0)

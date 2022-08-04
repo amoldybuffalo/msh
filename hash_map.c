@@ -28,7 +28,6 @@ char* hash_str_find(hash_element_str* hash_map, char* key)
 		{	
 			char* result = malloc(strlen(hash_map[i].value) + 1);
 			strcpy(result, hash_map[i].value);
-			printf(result);
 			return result;
 		}
 	}
