@@ -95,17 +95,13 @@ char* parse(char* argument_string)
 				if(builtin == NULL) 
 				{
 					FILE* out;
-					pid_t* process_pid = malloc(4);
 					int ch;
-					char** env = malloc(sizeof(char*));
-					env[0] = malloc(3);
-					strcpy(env[0], "TERM=linux");
-					out = spawn(argument_array, length, env, process_pid);	
+					
+					out = popen(argument_string, "r");	
 					while((ch = getc(out)) != EOF)
 					{
 						putc(ch, stderr);
 					}
-					kill(*process_pid, SIGKILL);
 					pclose(out);
 					define_empty(result);
 					

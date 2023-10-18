@@ -57,7 +57,9 @@ char** split(char* str, char* ch, int* length)
     	str_arr[i] = malloc(sizeof(char) * 100);	
     } 
 
-    str_arr[0] = strtok(str, ch);
+	char* str_copy = malloc(strlen(str) + 1);
+	strcpy(str_copy, str);
+    str_arr[0] = strtok(str_copy, ch);
     
     int i = 0;
     while(str_arr[i] != NULL)
